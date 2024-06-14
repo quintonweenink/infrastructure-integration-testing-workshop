@@ -17,41 +17,39 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Testcontainers
+//@Testcontainers
 @Transactional
 @SpringBootTest(classes = ReminderRepositoryIntegrationTest.DummyApplication.class)
 @ActiveProfiles("test")
 class ReminderRepositoryIntegrationTest {
 
-    @Container
-    static final PostgreSQLContainer<?> POSTGRESQL_CONTAINER = new PostgreSQLContainer<>("postgres:14");
+//    @Container
+//    static final PostgreSQLContainer<?> POSTGRESQL_CONTAINER = new PostgreSQLContainer<>("postgres:14");
 
     @Autowired
     private ReminderRepository reminderRepository;
     @Autowired
     private ReminderJpaRepository reminderJpaRepository;
 
-    @AfterEach
-    void tearDown() {
-        reminderJpaRepository.deleteAll();
-    }
+//    @AfterEach
+//    void tearDown() {
+//        reminderJpaRepository.deleteAll();
+//    }
 
     @Test
     void create() {
-        ReminderDto input = ReminderDto.builder().message("hello").build();
-
-        ReminderDto result = reminderRepository.create(input);
-
-        assertThat(result).isEqualTo(input);
-        assertThat(reminderJpaRepository.findAll()).hasSize(1);
+        /*
+        TODO: Execute key action
+        TODO: Verify result by checking how many instance are in the database
+         */
     }
 
-    @DynamicPropertySource
-    static void postgresqlProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", POSTGRESQL_CONTAINER::getJdbcUrl);
-        registry.add("spring.datasource.password", POSTGRESQL_CONTAINER::getPassword);
-        registry.add("spring.datasource.username", POSTGRESQL_CONTAINER::getUsername);
-    }
+//    @DynamicPropertySource
+//    static void postgresqlProperties(DynamicPropertyRegistry registry) {
+//        registry.add("spring.datasource.url", POSTGRESQL_CONTAINER::getJdbcUrl);
+//        registry.add("spring.datasource.password", POSTGRESQL_CONTAINER::getPassword);
+//        registry.add("spring.datasource.username", POSTGRESQL_CONTAINER::getUsername);
+//    }
 
     @ConfigurationPropertiesScan
     @SpringBootApplication

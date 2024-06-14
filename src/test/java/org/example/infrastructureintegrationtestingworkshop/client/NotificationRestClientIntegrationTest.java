@@ -1,4 +1,4 @@
-package org.example.git remote add origin https://github.com/quintonweenink/infrastructure-integration-testing-workshop.git.client;
+package org.example.infrastructureintegrationtestingworkshop.client;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import org.example.infrastructureintegrationtestingworkshop.core.model.ReminderDto;
@@ -18,7 +18,7 @@ import java.net.http.HttpClient;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@WireMockTest(httpPort = 9090)
+//@WireMockTest(httpPort = 9090)
 @ActiveProfiles("test")
 @SpringBootTest(classes = NotificationRestClientIntegrationTest.ServiceApplication.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
 class NotificationRestClientIntegrationTest {
@@ -37,9 +37,10 @@ class NotificationRestClientIntegrationTest {
                 """)
                 .withHeader("Content-Type", "application/json")));
 
-        ReminderDto reminderDto = sut.sendNotification(ReminderDto.builder().message("Test").build());
-
-        assertThat(reminderDto).isEqualTo(ReminderDto.builder().message("goodbye").build());
+        /*
+        TODO: Execute key action
+        TODO: Verify response
+         */
         verify(postRequestedFor(urlPathEqualTo(URL)));
     }
 
@@ -48,11 +49,11 @@ class NotificationRestClientIntegrationTest {
         DataSourceAutoConfiguration.class
     })
     static class ServiceApplication {
-        @Bean
-        public RestClient restClient(RestClient.Builder restClientBuilder) {
-            return restClientBuilder
-                .requestFactory(new JdkClientHttpRequestFactory(HttpClient.newBuilder().version(HttpClient.Version.HTTP_1_1).build()))
-                .build();
-        }
+//        @Bean
+//        public RestClient restClient(RestClient.Builder restClientBuilder) {
+//            return restClientBuilder
+//                .requestFactory(new JdkClientHttpRequestFactory(HttpClient.newBuilder().version(HttpClient.Version.HTTP_1_1).build()))
+//                .build();
+//        }
     }
 }

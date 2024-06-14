@@ -23,31 +23,33 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(classes = ReminderControllerIntegrationTest.RestApplication.class)
-@AutoConfigureMockMvc
+//@AutoConfigureMockMvc
 @ActiveProfiles("test")
 class ReminderControllerIntegrationTest {
 
     @MockBean
     protected ReminderService reminderService;
-    @Autowired
-    private MockMvc mockMvc;
+//    @Autowired
+//    private MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
 
     @Test
     @SneakyThrows
     void createReminder() {
-        ReminderDto response = ReminderDto.builder().message("goodbye").build();
-        ReminderDto request = ReminderDto.builder().message("hello").build();
-        when(reminderService.createReminder(eq(request))).thenReturn(response);
+        /*
+        TODO: Implement given
+         */
 
-        mockMvc.perform(post("/api/reminders")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
-            .andExpect(status().isOk())
-            .andExpect(content().json(objectMapper.writeValueAsString(response)));
+//        mockMvc.perform(post("/api/reminders")
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .content(objectMapper.writeValueAsString(request)))
+//            .andExpect(status().isOk())
+//            .andExpect(content().json(objectMapper.writeValueAsString(response)));
 
-        verify(reminderService).createReminder(request);
+        /*
+        TODO: Verify that core service was called
+         */
     }
 
     @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})

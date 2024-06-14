@@ -26,7 +26,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(classes = ReminderSenderIntegrationTest.MessagingApplication.class)
 @ActiveProfiles("test")
 class ReminderSenderIntegrationTest {
-    static final RabbitMQContainer RABBIT_MQ_CONTAINER = new RabbitMQContainer("rabbitmq:3.8-management-alpine").withVhost("RIS");
+
+//    static final RabbitMQContainer RABBIT_MQ_CONTAINER = new RabbitMQContainer("rabbitmq:3.8-management-alpine").withVhost("RIS");
+//    static {
+//        RABBIT_MQ_CONTAINER.start();
+//    }
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -34,27 +38,28 @@ class ReminderSenderIntegrationTest {
     private ReminderSender sut;
     @Autowired
     private RabbitTemplate rabbitTemplate;
-    static {
-        RABBIT_MQ_CONTAINER.start();
-    }
+
 
     @SneakyThrows
     @Test
     void sendEvent() {
-        var message = ReminderDto.builder().message("hello").build();
 
-        sut.sendEvent(message);
+        /*
+        TODO: Execute key action
+         */
 
         Message received = rabbitTemplate.receive(MessagingApplication.QUEUE, 1000);
-        assertThat(received.getBody()).asString().isEqualTo(objectMapper.writeValueAsString(message));
+        /*
+        TODO: Verify response using objectMapper.writeValueAsString(message)
+         */
     }
 
-    @DynamicPropertySource
-    static void rabbitmqProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.rabbitmq.addresses", () -> RABBIT_MQ_CONTAINER.getHost() + ":" + RABBIT_MQ_CONTAINER.getAmqpPort());
-        registry.add("spring.rabbitmq.username", RABBIT_MQ_CONTAINER::getAdminUsername);
-        registry.add("spring.rabbitmq.password", RABBIT_MQ_CONTAINER::getAdminPassword);
-    }
+//    @DynamicPropertySource
+//    static void rabbitmqProperties(DynamicPropertyRegistry registry) {
+//        registry.add("spring.rabbitmq.addresses", () -> RABBIT_MQ_CONTAINER.getHost() + ":" + RABBIT_MQ_CONTAINER.getAmqpPort());
+//        registry.add("spring.rabbitmq.username", RABBIT_MQ_CONTAINER::getAdminUsername);
+//        registry.add("spring.rabbitmq.password", RABBIT_MQ_CONTAINER::getAdminPassword);
+//    }
 
     @SpringBootApplication(exclude = {
         DataSourceAutoConfiguration.class,
@@ -68,27 +73,27 @@ class ReminderSenderIntegrationTest {
         public static final String ROUTING_KEY = "reminder.created";
         public static final String EXCHANGE = "amq.topic";
 
-        @Bean
-        Exchange exchange() {
-            return ExchangeBuilder.topicExchange(EXCHANGE).build();
-        }
-
-        @Bean
-        Queue dossierGepauzeerdQueue() {
-            return QueueBuilder.nonDurable(QUEUE).build();
-        }
-
-        @Bean
-        Binding dossierGepauzeerdBinding(Exchange exchange, Queue dossierGepauzeerdQueue) {
-            return BindingBuilder.bind(dossierGepauzeerdQueue)
-                .to(exchange)
-                .with(ROUTING_KEY)
-                .noargs();
-        }
-
-        @Bean
-        public MessageConverter messageConverter(ObjectMapper objectMapper) {
-            return new Jackson2JsonMessageConverter(objectMapper);
-        }
+//        @Bean
+//        Exchange exchange() {
+//            return ExchangeBuilder.topicExchange(EXCHANGE).build();
+//        }
+//
+//        @Bean
+//        Queue queue() {
+//            return QueueBuilder.nonDurable(QUEUE).build();
+//        }
+//
+//        @Bean
+//        Binding binding(Exchange exchange, Queue queue) {
+//            return BindingBuilder.bind(queue)
+//                .to(exchange)
+//                .with(ROUTING_KEY)
+//                .noargs();
+//        }
+//
+//        @Bean
+//        public MessageConverter messageConverter(ObjectMapper objectMapper) {
+//            return new Jackson2JsonMessageConverter(objectMapper);
+//        }
     }
 }
