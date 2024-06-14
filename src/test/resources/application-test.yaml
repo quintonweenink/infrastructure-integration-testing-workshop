@@ -1,0 +1,4 @@
+service:
+  client:
+    notification:
+      url: http://localhost:9090/api/notifications

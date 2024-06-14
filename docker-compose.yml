@@ -1,0 +1,18 @@
+version: '2'
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    environment:
+    - POSTGRES_PASSWORD=password
+    ports:
+    - "5432:5432"
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_VHOST=RIS
+    ports:
+    - "15672:15672"
+    - "5672:5672"
+    - "1883:1883"

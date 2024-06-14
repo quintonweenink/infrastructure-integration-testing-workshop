@@ -1,0 +1,28 @@
+server:
+  port: 8080
+service:
+  client:
+    notification:
+      url: http://localhost:8080/api/notifications
+spring:
+  application:
+    name: infrastructure-integration-testing-workshop
+  jpa:
+    show-sql: true
+    generate-ddl: true
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres?createDatabaseIfNotExist=true
+    username: postgres
+    password: password
+    hikari:
+      schema: public
+  rabbitmq:
+    addresses: localhost:5672
+    username: guest
+    password: guest
+    virtual-host: RIS
