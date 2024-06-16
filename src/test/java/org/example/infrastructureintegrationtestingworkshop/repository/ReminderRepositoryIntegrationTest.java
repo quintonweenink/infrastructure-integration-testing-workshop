@@ -15,26 +15,28 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
-//@Testcontainers
+@Testcontainers
 @Transactional
-@SpringBootTest(classes = ReminderRepositoryIntegrationTest.DummyApplication.class)
+@SpringBootTest(classes = ReminderRepositoryIntegrationTest.RepositoryApplication.class)
 @ActiveProfiles("test")
 class ReminderRepositoryIntegrationTest {
 
-//    @Container
-//    static final PostgreSQLContainer<?> POSTGRESQL_CONTAINER = new PostgreSQLContainer<>("postgres:14");
+    @Container
+    static final PostgreSQLContainer<?> POSTGRESQL_CONTAINER = new PostgreSQLContainer<>("postgres:14");
 
     @Autowired
     private ReminderRepository reminderRepository;
     @Autowired
     private ReminderJpaRepository reminderJpaRepository;
 
-//    @AfterEach
-//    void tearDown() {
-//        reminderJpaRepository.deleteAll();
-//    }
+    @AfterEach
+    void tearDown() {
+        reminderJpaRepository.deleteAll();
+    }
 
     @Test
     void create() {
@@ -42,18 +44,37 @@ class ReminderRepositoryIntegrationTest {
         TODO: Execute key action
         TODO: Verify result by checking how many instance are in the database
          */
+        reminderRepository.create(ReminderDto.builder().message("hello").build());
+
+        assertThat(reminderRepository.getAll()).hasSize(1);
+
     }
 
-//    @DynamicPropertySource
-//    static void postgresqlProperties(DynamicPropertyRegistry registry) {
-//        registry.add("spring.datasource.url", POSTGRESQL_CONTAINER::getJdbcUrl);
-//        registry.add("spring.datasource.password", POSTGRESQL_CONTAINER::getPassword);
-//        registry.add("spring.datasource.username", POSTGRESQL_CONTAINER::getUsername);
-//    }
+    @Test
+    void findById() {
+        /*
+        TODO: Execute key action
+        TODO: Verify result by checking how many instance are in the database
+         */
+        ReminderDto reminder = ReminderDto.builder().message("hello").build();
+        reminderRepository.create(reminder);
+        Optional<ReminderDto> result = reminderRepository.findByMessage("hello");
+        Optional<ReminderDto> resultNotFound = reminderRepository.findByMessage("other");
+
+        assertThat(result).hasValue(reminder);
+        assertThat(resultNotFound).isEmpty();
+    }
+
+    @DynamicPropertySource
+    static void postgresqlProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", POSTGRESQL_CONTAINER::getJdbcUrl);
+        registry.add("spring.datasource.password", POSTGRESQL_CONTAINER::getPassword);
+        registry.add("spring.datasource.username", POSTGRESQL_CONTAINER::getUsername);
+    }
 
     @ConfigurationPropertiesScan
     @SpringBootApplication
-    static class DummyApplication {
+    static class RepositoryApplication {
 
     }
 }

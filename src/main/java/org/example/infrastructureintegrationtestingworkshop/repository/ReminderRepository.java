@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -27,5 +28,10 @@ public class ReminderRepository {
                 .message(entity.getMessage())
                 .build())
             .toList();
+    }
+
+    public Optional<ReminderDto> findByMessage(String message) {
+        return reminderJpaRepository.findFirstByMessage(message)
+            .map(reminderEntity -> ReminderDto.builder().message(reminderEntity.getMessage()).build());
     }
 }

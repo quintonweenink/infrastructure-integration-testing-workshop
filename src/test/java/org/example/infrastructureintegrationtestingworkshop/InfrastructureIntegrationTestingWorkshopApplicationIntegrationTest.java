@@ -7,13 +7,11 @@ import lombok.SneakyThrows;
 import org.example.infrastructureintegrationtestingworkshop.core.model.ReminderDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.amqp.core.*;
-import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
-import org.springframework.amqp.support.converter.MessageConverter;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -24,7 +22,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.containers.RabbitMQContainer;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.DEFINED_PORT;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -51,6 +49,8 @@ class InfrastructureIntegrationTestingWorkshopApplicationIntegrationTest {
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
     @SneakyThrows
     @Test
@@ -72,6 +72,13 @@ class InfrastructureIntegrationTestingWorkshopApplicationIntegrationTest {
         /*
         TODO: Verify rabbitmq event is created
          */
+
+        Message received = rabbitTemplate.receive("reminder.queue", 1000);
+        /*
+        TODO: Verify response using objectMapper.writeValueAsString(message)
+         */
+        assertThat(received.getBody()).asString().isEqualTo(objectMapper.writeValueAsString(request));
+        verify(postRequestedFor(urlPathEqualTo(URL)));
     }
 
     @DynamicPropertySource
@@ -81,25 +88,25 @@ class InfrastructureIntegrationTestingWorkshopApplicationIntegrationTest {
         registry.add("spring.datasource.username", POSTGRESQL_CONTAINER::getUsername);
     }
 
+    @DynamicPropertySource
+    static void rabbitmqProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.rabbitmq.addresses", () -> RABBIT_MQ_CONTAINER.getHost() + ":" + RABBIT_MQ_CONTAINER.getAmqpPort());
+        registry.add("spring.rabbitmq.username", RABBIT_MQ_CONTAINER::getAdminUsername);
+        registry.add("spring.rabbitmq.password", RABBIT_MQ_CONTAINER::getAdminPassword);
+    }
+
     static class TestConfig {
 
         public static final String QUEUE = "reminder.queue";
         public static final String ROUTING_KEY = "reminder.created";
-        public static final String EXCHANGE = "amq.topic";
-
         @Bean
-        Exchange exchange() {
-            return ExchangeBuilder.topicExchange(EXCHANGE).build();
-        }
-
-        @Bean
-        Queue queue() {
+        Queue mockQueue() {
             return QueueBuilder.nonDurable(QUEUE).build();
         }
 
         @Bean
-        Binding binding(Exchange exchange, Queue queue) {
-            return BindingBuilder.bind(queue)
+        Binding mockBinding(Exchange exchange, Queue mockQueue) {
+            return BindingBuilder.bind(mockQueue)
                 .to(exchange)
                 .with(ROUTING_KEY)
                 .noargs();

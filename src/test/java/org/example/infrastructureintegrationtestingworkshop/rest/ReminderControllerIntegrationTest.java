@@ -15,7 +15,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -23,14 +22,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(classes = ReminderControllerIntegrationTest.RestApplication.class)
-//@AutoConfigureMockMvc
+@AutoConfigureMockMvc
 @ActiveProfiles("test")
 class ReminderControllerIntegrationTest {
 
     @MockBean
     protected ReminderService reminderService;
-//    @Autowired
-//    private MockMvc mockMvc;
+    @Autowired
+    private MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -41,15 +40,23 @@ class ReminderControllerIntegrationTest {
         TODO: Implement given
          */
 
-//        mockMvc.perform(post("/api/reminders")
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .content(objectMapper.writeValueAsString(request)))
-//            .andExpect(status().isOk())
-//            .andExpect(content().json(objectMapper.writeValueAsString(response)));
+        ReminderDto request = ReminderDto.builder().message("hello").build();
+        ReminderDto response = ReminderDto.builder().message("bye").build();
+
+        when(reminderService.createReminder(request)).thenReturn(response);
+
+
+        mockMvc.perform(post("/api/reminders")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+            .andExpect(status().isOk())
+            .andExpect(content().json(objectMapper.writeValueAsString(response)));
 
         /*
         TODO: Verify that core service was called
          */
+
+        verify(reminderService).createReminder(request);
     }
 
     @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})

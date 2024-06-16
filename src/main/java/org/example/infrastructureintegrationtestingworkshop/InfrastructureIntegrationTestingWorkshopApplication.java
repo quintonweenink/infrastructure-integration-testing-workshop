@@ -29,18 +29,4 @@ public class InfrastructureIntegrationTestingWorkshopApplication {
             .requestFactory(new JdkClientHttpRequestFactory(HttpClient.newBuilder().version(HttpClient.Version.HTTP_1_1).build()))
             .build();
     }
-
-    @Bean
-    public MessageConverter messageConverter(ObjectMapper objectMapper) {
-        return new Jackson2JsonMessageConverter(objectMapper);
-    }
-
-    @Bean
-    public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory, MessageConverter messageConverter) {
-        RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
-        rabbitTemplate.setMessageConverter(messageConverter);
-        rabbitTemplate.setObservationEnabled(true);
-        return rabbitTemplate;
-    }
-
 }
