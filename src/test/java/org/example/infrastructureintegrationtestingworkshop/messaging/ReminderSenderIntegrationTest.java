@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
 class ReminderSenderIntegrationTest {
 
     static final RabbitMQContainer RABBIT_MQ_CONTAINER = new RabbitMQContainer("rabbitmq:3.8-management-alpine")
-        .withVhost("RIS");
+        .withVhost("NIS");
 
     static {
         RABBIT_MQ_CONTAINER.start();

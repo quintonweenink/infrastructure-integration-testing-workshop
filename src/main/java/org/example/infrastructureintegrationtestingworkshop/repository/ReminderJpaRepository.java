@@ -10,6 +10,4 @@ interface ReminderJpaRepository extends JpaRepository<ReminderEntity, Long> {
     List<ReminderEntity> findAll();
 
     Optional<ReminderEntity> findFirstByMessage(String message);
-
-    @Query("SELECT")
 }
