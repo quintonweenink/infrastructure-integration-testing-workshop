@@ -99,6 +99,7 @@ class InfrastructureIntegrationTestingWorkshopApplicationIntegrationTest {
 
         public static final String QUEUE = "reminder.queue";
         public static final String ROUTING_KEY = "reminder.created";
+
         @Bean
         Queue mockQueue() {
             return QueueBuilder.nonDurable(QUEUE).build();
